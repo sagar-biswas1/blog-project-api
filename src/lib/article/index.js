@@ -1,11 +1,12 @@
+const defaults = require("../../config/defaults");
 const { Article } = require("../../model");
 
 const findAll =  ({
-  page = 1,
-  limit = 10,
-  sortType = "dsc",
-  sortBy = "updatedAt",
-  search = "",
+  page = defaults.page,
+  limit = defaults.limit,
+  sortType = defaults.sortType,
+  sortBy = defaults.sortType,
+  search = defaults.search,
 }) => {
   const sortStr = `${sortType === "dsc" ? "-" : ""}${sortBy}`;
   const filter = {
@@ -22,7 +23,7 @@ const findAll =  ({
 };
 
 
-const count = ({search=""})=>{
+const count = ({search=defaults.search})=>{
   const filter = {
     title: { $regex: search, $options: "i" },
   };
