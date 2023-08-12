@@ -9,7 +9,7 @@ router
 router
 .route("/api/v1/articles/:id")
 .put((req,res)=>{})
-.get((req,res)=>{})
+.get(articlesControllers.findByID)
 .patch((req,res)=>{})
 .delete((req,res)=>{})
 
