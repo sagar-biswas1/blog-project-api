@@ -30,7 +30,7 @@ const findAll = async (req, res, next) => {
     // return res.json(articles[0]._id)
     const data = transformData(
       articles,
-      ["_id", "title", "body", "updatedAt", "createdAt", "author", "cover"],
+      ["_id", "title", "body","updatedAt", "createdAt", "author", "cover"],
       { link: `/articles/{_id}` }
     );
 

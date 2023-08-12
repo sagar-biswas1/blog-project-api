@@ -9,8 +9,17 @@ const create = async (req, res, next) => {
       cover,
       author: req.user,
     });
-
-    res.status(201).json(article);
+const response= {
+  code:201,
+  message: "Article created successfully",
+  data: article,
+  "links": {
+    "self": `/articles/${article._id}`,
+    "author": `/articles/${article._id}/author`,
+    "comments": `/articles/${article._id}/comments`
+  }
+}
+    res.status(201).json(response);
   } catch (err) {
     next(err);
   }
