@@ -1,5 +1,6 @@
 const defaults = require("../../config/defaults");
 const { Article } = require("../../model");
+const { notFound, invalidParams } = require("../../utils/error");
 var ObjectId = require("mongoose").Types.ObjectId;
 
 const findAll = async ({
@@ -63,8 +64,11 @@ const findByID = async ({ id, expand = "" }) => {
 
   const itemToPopulate = expand.split(",").map((item) => item.trim());
   const article = await Article.findById(id);
+  if (!article) {
+    throw notFound();
+  }
   if (itemToPopulate.includes("author")) {
-    console.log("hello")
+    console.log("hello");
     await article.populate({ path: "author", select: "name" });
   }
 
@@ -74,6 +78,36 @@ const findByID = async ({ id, expand = "" }) => {
     });
   }
 
-  return article._doc
+  return article._doc;
 };
-module.exports = { findAll, create, count, findByID };
+
+const updateOrCreate = async (
+  id,
+  { title, body, author, status = "draft", cover = "" }
+) => {
+  if (!ObjectId.isValid(id)) {
+    throw new Error(`You have passed invalid id ${id}`);
+  }
+  if (!title || !author) {
+    throw invalidParams();
+  }
+  const payload = {
+    title,
+    body,
+    status,
+    cover,
+    author: author.id,
+  };
+  const article = await Article.findById(id);
+  if (!article) {
+    const article = await create({ ...payload, author });
+  
+    return { article, status: 201 };
+  }
+
+  article.overwrite(payload);
+  await article.save();
+
+  return { article:{...article._doc,id:article.id}, status: 200 };
+};
+module.exports = { findAll, create, count, findByID, updateOrCreate };
