@@ -10,7 +10,7 @@ router
 .route("/api/v1/articles/:id")
 .put(articlesControllers.updateItem)
 .get(articlesControllers.findByID)
-.patch((req,res)=>{})
-.delete((req,res)=>{})
+.patch(articlesControllers.updateItemPatch)
+.delete(articlesControllers.removeItem)
 
 module.exports = router

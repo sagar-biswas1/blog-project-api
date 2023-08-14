@@ -68,13 +68,13 @@ const findByID = async ({ id, expand = "" }) => {
     throw notFound();
   }
   if (itemToPopulate.includes("author")) {
-    console.log("hello");
     await article.populate({ path: "author", select: "name" });
   }
 
   if (itemToPopulate.includes("comments")) {
     await article.populate({
       path: "comments",
+      strictPopulate: false,
     });
   }
 
@@ -101,13 +101,55 @@ const updateOrCreate = async (
   const article = await Article.findById(id);
   if (!article) {
     const article = await create({ ...payload, author });
-  
+
     return { article, status: 201 };
   }
 
   article.overwrite(payload);
   await article.save();
 
-  return { article:{...article._doc,id:article.id}, status: 200 };
+  return { article: { ...article._doc, id: article.id }, status: 200 };
 };
-module.exports = { findAll, create, count, findByID, updateOrCreate };
+
+const updateProperties = async (id, { title, body, status, cover }) => {
+  if (!ObjectId.isValid(id)) {
+    throw new Error(`You have passed invalid id ${id}`);
+  }
+  const article = await Article.findById(id);
+  if (!article) {
+    throw notFound();
+  }
+
+  // article.title = title || article.title;
+  // article.body = body || article.body;
+  // article.status = status || article.status;
+  // article.cover = cover || article.cover;
+  const payload = { title, body, status, cover };
+
+  Object.keys(payload).forEach((key) => {
+    article[key] = payload[key] || article[key];
+  });
+
+  await article.save();
+  return { ...article._doc, id: article.id };
+};
+
+const removeItem = async (id) => {
+  if (!ObjectId.isValid(id)) {
+    throw new Error(`You have passed invalid id ${id}`);
+  }
+  const article = await Article.findById(id);
+  if (!article) {
+    throw notFound();
+  }
+  return await Article.findByIdAndDelete(id);
+};
+module.exports = {
+  findAll,
+  create,
+  count,
+  findByID,
+  updateOrCreate,
+  updateProperties,
+  removeItem,
+};
