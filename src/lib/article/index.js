@@ -1,6 +1,6 @@
 const defaults = require("../../config/defaults");
 const { Article } = require("../../model");
-const { notFound, invalidParams } = require("../../utils/error");
+const { notFound,  bedRequest } = require("../../utils/error");
 var ObjectId = require("mongoose").Types.ObjectId;
 
 const findAll = async ({
@@ -89,7 +89,7 @@ const updateOrCreate = async (
     throw new Error(`You have passed invalid id ${id}`);
   }
   if (!title || !author) {
-    throw invalidParams();
+    throw bedRequest();
   }
   const payload = {
     title,

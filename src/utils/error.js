@@ -4,13 +4,15 @@ const notFound=(message="Resource not found")=>{
     return error;
 }
 
-const invalidParams=(message="Expected resources have not been provided")=>{
+const bedRequest=(message="Expected resources have not been provided")=>{
     const error = new Error(message);
     error.status = 400;
     return error;
 }
 
+
+
 module.exports = {
     notFound,
-    invalidParams
+     bedRequest
 }
